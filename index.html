@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konversi Biner dan Desimal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #101827, #173b5e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            color: #1e293b;
+            width: 100%;
+            max-width: 460px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px #0004;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .mode {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .mode button {
+            flex: 1;
+            padding: 12px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: #334155;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .mode button.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 18px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb22;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 7px;
+        }
+
+        .convert {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .convert:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 22px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            overflow-wrap: anywhere;
+        }
+
+        .result-title {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        #output {
+            font-size: 25px;
+            font-weight: bold;
+            color: #1d4ed8;
+            overflow-wrap: anywhere;
+        }
+
+        #message {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .actions button {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Konversi Bilangan</h1>
+        <p class="subtitle">Biner (Basis 2) ↔ Desimal (Basis 10)</p>
+
+        <div class="mode">
+            <button id="binaryMode" class="active"
+                onclick="setMode('binary')">
+                Biner → Desimal
+            </button>
+
+            <button id="decimalMode"
+                onclick="setMode('decimal')">
+                Desimal → Biner
+            </button>
+        </div>
+
+        <label id="inputLabel" for="number">
+            Masukkan bilangan biner
+        </label>
+
+        <input
+            type="text"
+            id="number"
+            placeholder="Contoh: 1010"
+            autocomplete="off"
+        >
+
+        <p class="hint" id="hint">
+            Hanya boleh menggunakan angka 0 dan 1.
+        </p>
+
+        <button class="convert" onclick="convertNumber()">
+            Konversi Sekarang
+        </button>
+
+        <div class="result">
+            <div class="result-title">Hasil konversi:</div>
+            <div id="output">—</div>
+            <div id="message"></div>
+        </div>
+
+        <div class="actions">
+            <button onclick="swapMode()">⇄ Tukar Mode</button>
+            <button onclick="clearForm()">Hapus</button>
+        </div>
+
+        <div class="footer">
+            Program Konversi Bilangan • HTML, CSS & JavaScript
+        </div>
+    </div>
+
+    <script>
+        let mode = "binary";
+
+        const numberInput = document.getElementById("number");
+        const output = document.getElementById("output");
+        const message = document.getElementById("message");
+        const inputLabel = document.getElementById("inputLabel");
+        const hint = document.getElementById("hint");
+
+        function setMode(selectedMode) {
+            mode = selectedMode;
+
+            document.getElementById("binaryMode")
+                .classList.toggle("active", mode === "binary");
+
+            document.getElementById("decimalMode")
+                .classList.toggle("active", mode === "decimal");
+
+            if (mode === "binary") {
+                inputLabel.textContent =
+                    "Masukkan bilangan biner";
+                numberInput.placeholder = "Contoh: 1010";
+                hint.textContent =
+                    "Hanya boleh menggunakan angka 0 dan 1.";
+            } else {
+                inputLabel.textContent =
+                    "Masukkan bilangan desimal";
+                numberInput.placeholder = "Contoh: 10";
+                hint.textContent =
+                    "Masukkan bilangan bulat 0 atau lebih.";
+            }
+
+            output.textContent = "—";
+            message.textContent = "";
+            numberInput.value = "";
+        }
+
+        function convertNumber() {
+            const value = numberInput.value.trim();
+
+            if (value === "") {
+                showError("Silakan masukkan bilangan terlebih dahulu.");
+                return;
+            }
+
+            if (mode === "binary") {
+                if (!/^[01]+$/.test(value)) {
+                    showError(
+                        "Bilangan biner hanya boleh berisi 0 dan 1."
+                    );
+                    return;
+                }
+
+                const decimal = BigInt("0b" + value);
+                output.textContent = decimal.toString(10);
+
+            } else {
+                if (!/^\d+$/.test(value)) {
+                    showError(
+                        "Masukkan bilangan bulat desimal yang valid."
+                    );
+                    return;
+                }
+
+                const decimal = BigInt(value);
+                output.textContent = decimal.toString(2);
+            }
+
+            message.textContent = "";
+        }
+
+        function showError(text) {
+            output.textContent = "—";
+            message.textContent = text;
+        }
+
+        function swapMode() {
+            setMode(mode === "binary" ? "decimal" : "binary");
+        }
+
+        function clearForm() {
+            numberInput.value = "";
+            output.textContent = "—";
+            message.textContent = "";
+            numberInput.focus();
+        }
+
+        numberInput.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                convertNumber();
+            }
+        });
+    </script>
+</body>
+</html>
